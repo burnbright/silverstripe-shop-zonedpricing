@@ -1,10 +1,11 @@
 # Zoned Pricing Module
 
-Allow setting prices per zone (groups of regions).
+Allow setting product prices per zone (groups of regions).
 
 ## Installation Instructions
 
  * Add module to your site root folder, name it 'shop_zonedpricing'
+ * Run yoursite.tld/dev/build?flush=all
  * Add the `$SetLocationForm` form to your Page.ss template
  * Set up zones
  
