@@ -4,21 +4,20 @@ class SetLocationForm extends Form{
 	
 	function __construct($controller, $name = "SetLocationForm"){
 		$countries = SiteConfig::current_site_config()->getCountriesList();
-		$countryfield = new DropdownField("Country",_t('Address.COUNTRY','Country'),$countries);
 		$fields = new FieldSet(
-			$countryfield
+			$countryfield = new DropdownField("Country",_t('SetLocationForm.COUNTRY','Country'),$countries)
 		);
+		$countryfield->setHasEmptyDefault(true);
+		$countryfield->setEmptyString(_t('SetLocationForm.CHOOSECOUNTRY','Choose country...'));
 		$actions = new FieldSet(
 			new FormAction("setLocation","set")	
 		);
 		parent::__construct($controller, $name, $fields, $actions);
-		
-		//TODO: load currently set location
-		
-		$this->loadDataFrom(array(
-			'Country' => UserInfo::get('Country')
-		));
-		
+		//load currently set location
+		if($address = UserInfo::get_location()){
+			$countryfield->setHasEmptyDefault(false);
+			$this->loadDataFrom($address);
+		}
 	}
 	
 	function setLocation($data,$form){

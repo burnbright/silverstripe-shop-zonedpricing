@@ -28,11 +28,11 @@ class ZonedPricingProductDecorator extends DataObjectDecorator{
 	/**
 	 * Gets zoned price
 	 */
-	function getZonedPrice($baseprice = null){
+	function getZonedPrice(){
 		$zoneprice = 0;
 		$ids = Zone::get_zone_ids(); //get zone ids;
 		if(is_array($ids)){
-			$where = "\"ZonePrice\".\"ZoneID\" IN(".implode(",", $ids).")";
+			$where = "\"ZonePrice\".\"ProductID\" = {$this->owner->ID} AND \"ZonePrice\".\"ZoneID\" IN(".implode(",", $ids).")";
 			//case custom sorting to
 			$orderby = "";
 			if(count($ids) > 1){
@@ -50,6 +50,13 @@ class ZonedPricingProductDecorator extends DataObjectDecorator{
 			}
 		}
 		return $zoneprice;
+	}
+	
+	function updateSellingPrice(&$baseprice){
+		$zonedprice = $this->getZonedPrice();
+		if($zonedprice){
+			$baseprice = $zonedprice;
+		} 
 	}
 	
 }

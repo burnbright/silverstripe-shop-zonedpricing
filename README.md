@@ -33,4 +33,3 @@ for only zones where their corresponding region restrictions match the given add
 
 Closer matches are favoured, for example: an address for Auckland, New Zealand will first be matched to a zone
 which specifies Auckland, rather than another zone that targets New Zealand.
-  

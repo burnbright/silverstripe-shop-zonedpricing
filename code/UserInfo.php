@@ -5,21 +5,28 @@
  */
 class UserInfo extends Object{
 	
-	static function set_location($address){
+	private static $singleton = null;
+	protected static function singleton(){
+		if(!self::$singleton){
+			self::$singleton = new UserInfo();
+		}
+		return self::$singleton;
+	}
+	
+	protected function setLocation($address){
 		if(is_array($address)){
 			$address = new Address($address);
 		}
-		//store data in session
 		Session::set("UserInfo.Location",$address);
-		//$this->extend("afterSetLocation",$address);
+		$this->extend("onAfterSetLocation",$address);
+	}
+	
+	static function set_location($address){
+		UserInfo::singleton()->setLocation($address);
 	}
 	
 	static function get_location(){
 		return Session::get("UserInfo.Location");
 	}	
-	
-	static function get($field){
-		return null;
-	}
 	
 }
