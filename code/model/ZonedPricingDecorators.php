@@ -1,5 +1,22 @@
 <?php
 
+class ZoneUserInfo extends Extension{
+
+	function onAfterSetLocation($address){
+		Zone::cache_zone_ids($address);
+	}
+
+}
+
+class ZonePricedOrder extends DataObjectDecorator{
+	
+	function onSetShippingAddress($address){
+		UserInfo::set_location($address);
+		Zone::cache_zone_ids($address);
+	}
+	
+}
+
 class ZonedPricingProductDecorator extends DataObjectDecorator{
 	
 	function extraStatics(){
