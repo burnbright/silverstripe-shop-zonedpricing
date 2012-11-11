@@ -38,8 +38,9 @@ class ZonedPricingProductDecorator extends DataObjectDecorator{
 		);
 		
 		$fields->addFieldToTab("Root.Content.Pricing",
-			new TableField("ZonePrices", "ZonePrice",$fieldlist, $fieldtypes)	
+			$zonepricestable = new TableField("ZonePrices", "ZonePrice",$fieldlist, $fieldtypes)	
 		);
+		$zonepricestable->setCustomSourceItems($this->owner->ZonePrices());
 	}
 	
 	/**
