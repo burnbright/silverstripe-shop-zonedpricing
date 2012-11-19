@@ -14,15 +14,19 @@ class PopulateZonedPricingTask extends BuildTask{
 	}
 	
 	function populate(){
-		$fixture = new YamlFixture("shop_zonedpricing/tests/fixtures/zonedpricing.yml");
-		$fixture->saveIntoDatabase();
-		DB::alteration_message('Created zones, and example product', 'created');
+		if(!DataObject::get_one('Zone')){
+			$fixture = new YamlFixture("shop_zonedpricing/tests/fixtures/zonedpricing.yml");
+			$fixture->saveIntoDatabase();
+			DB::alteration_message('Created zones, and example product', 'created');
+		}else{
+			DB::alteration_message('Zone(s) already exist, none created.');
+		}
 	}
 	
 	function clear(){
 		DB::query("DELETE FROM \"Zone\" WHERE 1;");
 		DB::query("DELETE FROM \"ZonePrice\" WHERE 1;");
-		echo "Deleted all zones and zoneprices";
+		DB::alteration_message("Deleted all zones and zoneprices");
 	}
 	
 }
