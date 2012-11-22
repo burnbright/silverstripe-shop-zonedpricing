@@ -14,14 +14,14 @@ class SetLocationForm extends Form{
 		);
 		parent::__construct($controller, $name, $fields, $actions);
 		//load currently set location
-		if($address = UserInfo::get_location()){
+		if($address = ShopUserInfo::get_location()){
 			$countryfield->setHasEmptyDefault(false);
 			$this->loadDataFrom($address);
 		}
 	}
 	
 	function setLocation($data,$form){
-		UserInfo::set_location($data);
+		ShopUserInfo::set_location($data);
 		Controller::curr()->redirectBack();
 	}
 	
