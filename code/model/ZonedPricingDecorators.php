@@ -8,15 +8,6 @@ class ZoneUserInfo extends Extension{
 
 }
 
-class ZonePricedOrder extends DataObjectDecorator{
-	
-	function onSetShippingAddress($address){
-		ShopUserInfo::set_location($address);
-		Zone::cache_zone_ids($address);
-	}
-	
-}
-
 class ZonedPricingProductDecorator extends DataObjectDecorator{
 	
 	function extraStatics(){

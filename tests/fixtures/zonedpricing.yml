@@ -9,8 +9,7 @@ Zone:
         Name: Local
     special:
         Name: Special
-
-RegionRestriction:
+ZoneRegion:
     nz:
         Country: NZ
         Zone: =>Zone.transtasman
@@ -55,4 +54,3 @@ ZonePrice:
         Product: =>Product.p1
         Price: 200
         Zone: =>Zone.special
-        

@@ -14,7 +14,7 @@ class PopulateZonedPricingTask extends BuildTask{
 	}
 	
 	function populate(){
-		if(!DataObject::get_one('Zone')){
+		if(!DataObject::get_one('ZonePrice')){
 			$fixture = new YamlFixture("shop_zonedpricing/tests/fixtures/zonedpricing.yml");
 			$fixture->saveIntoDatabase();
 			DB::alteration_message('Created zones, and example product', 'created');
@@ -24,9 +24,8 @@ class PopulateZonedPricingTask extends BuildTask{
 	}
 	
 	function clear(){
-		DB::query("DELETE FROM \"Zone\" WHERE 1;");
 		DB::query("DELETE FROM \"ZonePrice\" WHERE 1;");
-		DB::alteration_message("Deleted all zones and zoneprices");
+		DB::alteration_message("Deleted all zoneprices");
 	}
 	
 }
