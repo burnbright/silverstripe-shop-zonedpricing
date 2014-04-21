@@ -8,40 +8,62 @@ class ZoneUserInfo extends Extension{
 
 }
 
-class ZonedPricingProductDecorator extends DataObjectDecorator{
+class ZonedPricingProductDecorator extends DataExtension{
 	
-	function extraStatics(){
-		return array(
-			'has_many' => array(
-				'ZonePrices' => 'ZonePrice'
-			)
-		);
-	}
+	private static $has_many = array(
+		'ZonePrices' => 'ZonePrice'
+	);
 	
-	function updateCMSFields($fields){
-		$fieldlist = array(
-			'ZoneID' => 'Zone',
-			'Price' => 'Price'
-		);
-		$fieldtypes = array(
-			'ZoneID' => 'ZoneSelectField', //custom field required because TableField doesn't allow customising row fields
-			'Price' => 'TextField'
+	function updateCMSFields(FieldList $fields){
+		
+		$fields->removeByName("Price");
+		//$fields->removeByName("ZonePrices");
+		
+		$options = $this->owner->ZonePrices();
+		$gridFieldConfig = GridFieldConfig::create()->addComponents(
+			//new GridFieldAddExistingAutocompleter(),
+			new GridFieldToolbarHeader(),
+			new GridFieldAddNewButton('toolbar-header-right'),
+			new GridFieldSortableHeader(),
+			new GridFieldDataColumns(),
+			new GridFieldPaginator(10),
+			new GridFieldEditButton(),
+			new GridFieldDeleteAction(),
+			new GridFieldDetailForm()
 		);
 		
-		$fields->addFieldToTab("Root.Content.Pricing",
-			$zonepricestable = new TableField("ZonePrices", "ZonePrice",$fieldlist, $fieldtypes)	
-		);
-		$zonepricestable->setCustomSourceItems($this->owner->ZonePrices());
+		$itemsTable = new GridField("ZonePrices","Zone Prices",$options,$gridFieldConfig);
+			
+		if($this->owner instanceof SiteTree){
+			if(!$this->owner->Variations()){
+				$fields->addFieldToTab('Root.Pricing.ZonePrices',$itemsTable);
+			}
+		}else{
+			$fields->push($itemsTable);
+		}
+	
 	}
 	
 	/**
 	 * Gets zoned price
 	 */
 	function getZonedPrice(){
+		
+		$userlocation = ShopUserInfo::singleton()->getAddress();
+		
+		$zones = Zone::get_zones_for_address($userlocation);
+		foreach ($zones as $zone){
+			$ids[] = $zone->ID;
+		}
+		
 		$zoneprice = 0;
-		$ids = Zone::get_zone_ids(); //get zone ids;
+		//$ids = Zone::get_zone_ids(); //get zone ids;
 		if(is_array($ids)){
-			$where = "\"ZonePrice\".\"ProductID\" = {$this->owner->ID} AND \"ZonePrice\".\"ZoneID\" IN(".implode(",", $ids).")";
+			if($this->owner->ClassName == "ProductVariation"){
+				$where = "\"ZonePrice\".\"ProductVariationID\" = {$this->owner->ID} AND \"ZonePrice\".\"ZoneID\" IN(".implode(",", $ids).")";
+			}else{
+				$where = "\"ZonePrice\".\"ProductID\" = {$this->owner->ID} AND \"ZonePrice\".\"ZoneID\" IN(".implode(",", $ids).")";
+			}
 			//case custom sorting to
 			$orderby = "";
 			if(count($ids) > 1){
@@ -57,6 +79,7 @@ class ZonedPricingProductDecorator extends DataObjectDecorator{
 			if($zp = DataObject::get_one("ZonePrice", $where, true, $orderby)){
 				$zoneprice = $zp->Price;
 			}
+			
 		}
 		return $zoneprice;
 	}

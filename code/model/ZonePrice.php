@@ -8,7 +8,20 @@ class ZonePrice extends DataObject{
 	
 	static $has_one = array(
 		'Zone' => 'Zone',
-		'Product' => 'Product'
+		'Product' => 'Product',
+		'ProductVariation' => 'ProductVariation'
 	);
+	
+	static $summary_fields = array(
+		'Zone.Name' => 'Zone',
+		'Price' => 'Price'
+	);
+	
+	function getCMSFields() {
+		$fields = parent::getCMSFields();
+		$fields->removeByName("ProductID");
+		$fields->removeByName("ProductVariationID");
+		return $fields;
+	}
 	
 }
